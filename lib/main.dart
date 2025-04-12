@@ -1,470 +1,484 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
+import 'package:flutter/services.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart'as http;
+import 'dart:convert';
 void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ob(),
-  ));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
 }
 
-class ob extends StatefulWidget {
-  const ob({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<ob> createState() => _obState();
+  State<Home> createState() => _HomeState();
 }
 
-class _obState extends State<ob> {
-  int tanla = 1;
-
-  void funksiya(intq) {
-    setState(() {
-      tanla = intq;
-    });
-  }
-
-  List<Widget> nom = [
-    h(),
-    ik(),
-    d(),
-    f(),
+class _HomeState extends State<Home> {
+  final TextEditingController _controller = TextEditingController();
+  String enteredValue = '';
+  String _age = ""; // Kiritilgan yosh
+  String errorText = '';
+  List image = [
+    "rm/1.jpg",
+    "rm/2.jpg",
+    "rm/3.jpg",
+    "rm/4.jpg",
+    "rm/5.jpg",
+    "rm/6.jpg",
+    "rm/7.jpg",
+    "rm/8.jpg",
+    "rm/9.jpg",
+    "rm/10.jpg",
+    "rm/11.jpg",
+    "rm/12.jpg",
+    "rm/13.jpg",
+    "rm/14.jpg",
+    "rm/15.jpg",
+    "rm/16.jpg",
+    "rm/17.jpg",
+    "rm/18.jpg",
+    "rm/19.jpg",
+    "rm/20.jpg",
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          onTap: (value) {
-            funksiya(value);
-          },
-          currentIndex: tanla,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                backgroundColor: Colors.blue,
-                icon: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.pause_presentation_rounded,
-                  ),
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => keyingisahifa()),
+              );
+            },
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("rasm/pul.png"),
+                  fit: BoxFit.cover,
                 ),
-                label: ""),
-            BottomNavigationBarItem(
-                backgroundColor: Colors.blue,
-                icon: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.add,
-                  ),
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                backgroundColor: Colors.blue,
-                icon: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.book_outlined,
-                  ),
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                backgroundColor: Colors.blue,
-                icon: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.settings,
-                  ),
-                ),
-                label: ""),
-          ]),
-      body: Center(
-        child: nom.elementAt(tanla),
-      ),
-    );
-  }
-}
-
-class h extends StatefulWidget {
-  const h({super.key});
-
-  @override
-  State<h> createState() => _hState();
-}
-
-class _hState extends State<h> {
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            flexibleSpace: TabBar(tabs: [
-              Tab(
-                icon: Icon(Icons.music_note),
               ),
-              Tab(
-                icon: Icon(Icons.book_outlined),
+            ),
+          ),
+        ),
+        title: Center(
+          child: ShaderMask(
+            shaderCallback:
+                (bounds) => LinearGradient(
+                  colors: [Colors.blue, Colors.green],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(
+                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                ),
+            child: Text(
+              'Flutter',
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // kerak, ShaderMaskga ta’sir qiladi
               ),
-            ]),
+            ),
           ),
-          body: TabBarView(children: [tab(), tob()]),
-        ));
-  }
-}
+        ),
+        actions: [
+          InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: StatefulBuilder(
+                      builder: (context, setState) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              controller: _controller,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(2),
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              decoration: InputDecoration(
+                                labelText: 'enter your age',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  enteredValue =
+                                      value; // Kiritilgan qiymatni saqlash
+                                });
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${enteredValue.length}/2',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    actions: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_controller.text.isEmpty) {
+                                // Xatolik — hech nima kiritilmagan
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '❌ Iltimos, yoshingizni kiriting!',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              } else {
+                                setState(() {
+                                  _age = _controller.text;
+                                });
 
-class ik extends StatefulWidget {
-  const ik({super.key});
+                                Navigator.of(context).pop(); // Dialogni yopish
 
-  @override
-  State<ik> createState() => _ikState();
-}
-
-class _ikState extends State<ik> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '$_counter',
-            style: TextStyle(fontSize: 50),
-          ),
-          SizedBox(height: 10,),
-          FloatingActionButton(
-            onPressed: _incrementCounter,
-            child: Icon(Icons.add),
+                                // Dialog yopilgandan keyin SnackBar ko‘rsatish uchun postFrame ishlatamiz
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        '✅ Ma\'lumot saqlandi: $_age',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                });
+                              }
+                            },
+                            child: Text('OK'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('back'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Lottie.asset("lotte/button.json"),
           ),
         ],
-      )),
-    );
-  }
-}
-
-class d extends StatefulWidget {
-  const d({super.key});
-
-  @override
-  State<d> createState() => _dState();
-}
-
-class _dState extends State<d> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
-  }
-}
-
-class f extends StatefulWidget {
-  const f({super.key});
-
-  @override
-  State<f> createState() => _fState();
-}
-
-class _fState extends State<f> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("rasim/1.jpg"), fit: BoxFit.cover)),
       ),
-    );
-  }
-}
-
-class tab extends StatefulWidget {
-  const tab({super.key});
-
-  @override
-  State<tab> createState() => _tabState();
-}
-
-class _tabState extends State<tab> {
-  List<o> a = [
-    o(nomi: "Alhazar"),
-    o(nomi: "dhddbusavbadvbhvbh"),
-    o(nomi: "aeellavhvbdsbhvdsa"),
-    o(nomi: "dbdasvvshasvdasvbhi"),
-    o(nomi: "ohmygod gvuchdvhbvv"),
-    o(nomi: "yommayo bla-bla-bla"),
-    o(nomi: "yosingil cdsvxbhhdc"),
-    o(nomi: "yoaltag'firullah"),
-    o(nomi: "ostag firullla"),
-    o(nomi: "ohhhhhhmygoooootnis"),
-    o(nomi: "ooommmmaaaaayyyooooo"),
-    o(nomi: "osiparabida"),
-    o(nomi: "oooo-oooo"),
-    o(nomi: "aaaaaaaaaa"),
-    o(nomi: "olaaaaaaa"),
-    o(nomi: "uxlaagiinshundaulasanbola"),
-    o(nomi: "ukaaaaaam"),
-    o(nomi: "oookkkkkaaaam"),
-    o(nomi: "ug'g'limmm"),
-    o(nomi: "opammmmmni"),
-    o(nomi: "okamnimii"),
-    o(nomi: "aaakkkaaaaajonimimi"),
-  ];
-
-  Widget hahahayangidastu(o ass) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => olaaalaa(ulaaa: ass),
-            ));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: Container(
-          width: double.infinity,
-          height: 70,
-          color: Colors.black87,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  ass.nomi!,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("rasim/1.jpg"), fit: BoxFit.cover)),
-        child: ListView(
-          children: a.map((hohoho) => hahahayangidastu(hohoho)).toList(),
-        ),
-      ),
-    );
-  }
-}
-
-class o {
-  String? nomi;
-  o({this.nomi});
-}
-
-class nomlar {
-  String? kerek;
-  nomlar({this.kerek});
-}
-
-class tob extends StatefulWidget {
-  const tob({super.key});
-
-  @override
-  State<tob> createState() => _tobState();
-}
-
-class _tobState extends State<tob> {
-  List<nomlar> h = [
-    nomlar(kerek: "Alhazar"),
-    nomlar(kerek: "dhddbusavbadvbhvbh"),
-    nomlar(kerek: "aeellavhvbdsbhvdsa"),
-    nomlar(kerek: "dbdasvvshasvdasvbhi"),
-    nomlar(kerek: "ohmygod gvuchdvhbvv"),
-    nomlar(kerek: "yommayo bla-bla-bla"),
-    nomlar(kerek: "yosingil cdsvxbhhdc"),
-    nomlar(kerek: "yoaltag'firullah"),
-    nomlar(kerek: "ostag firullla"),
-    nomlar(kerek: "ohhhhhhmygoooootnis"),
-    nomlar(kerek: "ooommmmaaaaayyyooooo"),
-    nomlar(kerek: "osiparabida"),
-    nomlar(kerek: "oooo-oooo"),
-    nomlar(kerek: "aaaaaaaaaa"),
-    nomlar(kerek: "olaaaaaaa"),
-    nomlar(kerek: "uxlaagiinshundaulasanbola"),
-    nomlar(kerek: "ukaaaaaam"),
-    nomlar(kerek: "oookkkkkaaaam"),
-    nomlar(kerek: "ug'g'limmm"),
-    nomlar(kerek: "opammmmmni"),
-    nomlar(kerek: "okamnimii"),
-    nomlar(kerek: "aaakkkaaaaajonimimi"),
-  ];
-
-  Widget inga(nomlar hggg) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => axmo(uuaa: hggg),
-            ));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: Container(
-          width: double.infinity,
-          height: 70,
-          color: Colors.black87,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  hggg.kerek!,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("rasim/1.jpg"), fit: BoxFit.cover)),
-        child: ListView(
-          children: h.map((eee) => inga(eee)).toList(),
-        ),
-      ),
-    );
-  }
-}
-
-class axmo extends StatefulWidget {
-  final nomlar uuaa;
-  const axmo({super.key, required this.uuaa});
-
-  @override
-  State<axmo> createState() => _axmoState();
-}
-
-class _axmoState extends State<axmo> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.blue,
-          title: Center(
-            child: Text(
-              widget.uuaa.kerek!,
-              style: TextStyle(color: Colors.white),
-            ),
-          )),
-      body: Column(
-        children: [Text("")],
-      ),
-    );
-  }
-}
-
-class olaaalaa extends StatefulWidget {
-  final o ulaaa;
-  const olaaalaa({super.key, required this.ulaaa});
-
-  @override
-  State<olaaalaa> createState() => _olaaalaaState();
-}
-
-class _olaaalaaState extends State<olaaalaa> {
-  bool olma = true;
-
-  void funksiya() {
-    setState(() {
-      olma = !olma;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(widget.ulaaa.nomi!),
-        ),
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("rasim/1.jpg"), fit: BoxFit.cover)),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(150.0),
-              child: IconButton(
-                onPressed: () {
-                  funksiya();
-                },
-                icon: Icon(
-                  olma ? Icons.stop_rounded : Icons.stop_circle,
-                  color: Colors.white,
-                  size: 50,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(height: 70),
+                    Text(
+                      "HIS AGE",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 72,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "$_age",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 40,
+                                ),
+                              ),
+                              Column(
+                                children: [
+                                  SizedBox(height: 15),
+                                  Text(
+                                    "/100",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "OVERALL",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      width: 100,
+                      height: 50,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 17,
+                            backgroundColor: Colors.red,
+                            child: Center(
+                              child: Icon(
+                                Icons.heart_broken,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "34",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 2),
+                                      Text(
+                                        "/100",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                "Energy",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      width: 100,
+                      height: 50,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("rasm/gg.png"),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "24",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 2),
+                                      Text(
+                                        "/100",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                "Smart",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      width: 100,
+                      height: 50,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("rasm/c.png"),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "34",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 2),
+                                      Text(
+                                        "/100",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                "Speed",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                Column(
+                  children: [
+                    SizedBox(height: 90),
+                    Align(
+                      alignment: Alignment.topLeft, // yuqoriga joylashtiradi
+                      child: Container(
+                        width: 200,
+                        height: 370,
+                        child: Stack(
+                          children: [
+                            SizedBox(height: 20),
+                            Positioned(
+                              bottom: 0,
+                              child: Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.rotationX(2),
+                                child: Lottie.asset(
+                                  "lotte/circul1.json",
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              child: Container(
+                                width: 200,
+                                height: 275,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage("rasm/o'zim2.png"),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            Container(
-              width: double.infinity,
-              height: 300,
-              decoration: BoxDecoration(
-                  color: Colors.black87,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.skip_previous,
-                    color: Colors.white,
+            Text("Old memory"),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                child: CarouselSlider(
+                  items:
+                      image.map((item) {
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            image: DecorationImage(
+                              image: AssetImage(item),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                  options: CarouselOptions(
+                    initialPage: 0,
+                    viewportFraction: 0.8,
+                    autoPlay: true,
+                    autoPlayInterval: Duration(seconds: 3),
+                    autoPlayAnimationDuration: Duration(seconds: 2),
+                    autoPlayCurve: Curves.easeInOut,
+                    enlargeCenterPage: true,
+                    scrollPhysics: BouncingScrollPhysics(),
                   ),
-                  IconButton(
-                      onPressed: () {
-                        funksiya();
-                      },
-                      icon: Icon(
-                        olma ? Icons.stop_rounded : Icons.stop_circle,
-                        color: Colors.white,
-                        size: 25,
-                      )),
-                  Icon(
-                    Icons.skip_next_sharp,
-                    color: Colors.white,
-                  )
-                ],
+                ),
               ),
             ),
           ],
@@ -474,76 +488,104 @@ class _olaaalaaState extends State<olaaalaa> {
   }
 }
 
-class MyApp extends StatelessWidget {
+class keyingisahifa extends StatefulWidget {
+  const keyingisahifa({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TodoList(),
+  State<keyingisahifa> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<keyingisahifa> {
+  String natija = "";
+  List nomlist = [];
+  void data() async {
+    final respons = await http.get(
+      Uri.parse("https://cbu.uz/uz/arkhiv-kursov-valyut/json/"),
     );
-  }
-}
-
-class TodoList extends StatefulWidget {
-  @override
-  _TodoListState createState() => _TodoListState();
-}
-
-class _TodoListState extends State<TodoList> {
-  final List<String> _todos = [];
-  final TextEditingController _controller = TextEditingController();
-
-  void _addTodo() {
-    setState(() {
-      if (_controller.text.isNotEmpty) {
-        _todos.add(_controller.text);
-        _controller.clear();
+    if (respons.statusCode == 200) {
+      List jsondata = json.decode(respons.body);
+      for (var item in jsondata) {
+        nomlist.add(Map.from(item));
       }
-    });
+      setState(() {});
+    }
   }
 
-  void _removeTodo(int index) {
+  void nooooooooo() {
     setState(() {
-      _todos.removeAt(index);
+      DateTime time = DateTime.now();
+      natija = DateFormat("MM-dd-yy").format(time);
     });
+
+    // Call the function again after 1 day
+    Future.delayed(Duration(days: 1), nooooooooo);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    nooooooooo();
+    data();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter Todo',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: _addTodo,
-            child: Text('Add Todo'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _todos.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_todos[index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => _removeTodo(index),
-                  ),
-                );
-              },
-            ),
-          ),
+        backgroundColor: Colors.blue,
+        actions: [
+          Text(natija, style: TextStyle(color: Colors.white, fontSize: 25)),
         ],
+        title: Text(
+          "Valyuta kurslari",
+          style: TextStyle(color: Colors.white, fontSize: 25),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView.builder(
+          itemCount: nomlist.length,
+          itemBuilder:
+              (context, index) => Container(
+                height: 150,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text("updated day"),
+                      Text("${natija}"),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text("1${nomlist[index]["Ccy"]}"),
+                            SizedBox(width: 50,),
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text("${nomlist[index]["CcyNm_UZ"]}",style: TextStyle(color: Colors.blue),),
+                                    Text("(${nomlist[index]["Code"]})",style: TextStyle(color: Colors.blue),),
+                                  ],
+                                ),
+                                Text("${nomlist[index]["Rate"]}",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),)
+                              ],
+                            ),
+                            SizedBox(width: 50,),
+                            Text("${nomlist[index]["Diff"]}")
+                          ],
+                        ),
+                      )
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                ),
+              ),
+        ),
       ),
     );
   }
